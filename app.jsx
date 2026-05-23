@@ -8,33 +8,36 @@ const DEFAULTS = window.TWEAK_DEFAULTS || { palette: "atlantic", type: "modern",
 
 function useScrollReveal() {
   useEffectRoot(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      document.querySelectorAll(".reveal").forEach((el) => el.classList.add("is-in"));
-      return;
-    }
-    let raf = 0;
-    const reveal = () => {
-      raf = 0;
-      const vh = window.innerHeight;
-      document.querySelectorAll(".reveal:not(.is-in)").forEach((el) => {
-        const r = el.getBoundingClientRect();
-        /* Reveal once the element's top crosses 90% of the viewport (i.e. ~10%
-           of the element is on-screen). Generous so nothing gets stuck hidden. */
-        if (r.top < vh * 0.9 && r.bottom > 0) el.classList.add("is-in");
-      });
-    };
-    const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(reveal);
-    };
-    reveal();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    /* Probe: is this document's animation timeline actually advancing?
+       Some embed iframes freeze it, and we'd hide content that never reveals.
+       If the timeline is paused, leave reveals fully visible. */
+    let timelineLive = false;
+    const t0 = document.timeline?.currentTime ?? 0;
+    requestAnimationFrame(() => {
+      const t1 = document.timeline?.currentTime ?? 0;
+      timelineLive = t1 > t0;
+      if (!timelineLive) return;
+
+      document.documentElement.classList.add("reveal--ready");
+
+      const reveal = () => {
+        const vh = window.innerHeight;
+        document.querySelectorAll(".reveal:not(.is-in)").forEach((el) => {
+          const r = el.getBoundingClientRect();
+          if (r.top < vh * 0.9 && r.bottom > 0) el.classList.add("is-in");
+        });
+      };
+      let raf = 0;
+      const onScroll = () => {
+        if (raf) return;
+        raf = requestAnimationFrame(() => { raf = 0; reveal(); });
+      };
+      reveal();
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll);
+    });
   }, []);
 }
 

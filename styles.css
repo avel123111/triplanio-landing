@@ -1154,18 +1154,22 @@ h3 {
   .footer__cols { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* ---------- Scroll-reveal ---------- */
-.reveal {
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity .6s ease, transform .6s ease;
+/* ---------- Scroll-reveal ----------
+   Content is visible by default. When JS adds .reveal--ready on the <html>
+   element (only when document.timeline is actually running), we hide the
+   .reveal items off-screen and animate them in on intersection. In contexts
+   where the timeline is frozen (some embed iframes), we never add --ready,
+   so nothing hides. */
+@keyframes revealIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-.reveal.is-in {
-  opacity: 1;
-  transform: translateY(0);
-}
+.reveal { opacity: 1; transform: none; }
+html.reveal--ready .reveal { opacity: 0; transform: translateY(12px); }
+html.reveal--ready .reveal.is-in { animation: revealIn .6s ease both; }
 @media (prefers-reduced-motion: reduce) {
-  .reveal { opacity: 1; transform: none; transition: none; }
+  html.reveal--ready .reveal { opacity: 1; transform: none; }
+  html.reveal--ready .reveal.is-in { animation: none; }
 }
 
 /* image placeholders */
@@ -1269,15 +1273,6 @@ h3 {
   cursor: pointer;
 }
 .langdd__item:hover { background: var(--wash); }
-.langdd__item .flag {
-  width: 22px; height: 16px;
-  border-radius: 3px;
-  background: var(--wash);
-  border: 1px solid var(--line);
-  overflow: hidden;
-  position: relative;
-  flex: 0 0 auto;
-}
 .langdd__item .label { flex: 1; font-weight: 500; }
 .langdd__item .code { color: var(--muted-2); font-size: 11.5px; font-weight: 600; letter-spacing: .04em; }
 .langdd__item[aria-checked="true"] {
@@ -1285,11 +1280,6 @@ h3 {
   color: var(--brand);
 }
 .langdd__item[aria-checked="true"] .code { color: var(--brand); }
-
-/* tiny flag shapes — pure CSS */
-.flag.flag--en { background: linear-gradient(#012169 33%, #fff 33% 66%, #C8102E 66%); }
-.flag.flag--ru { background: linear-gradient(#fff 33%, #0033A0 33% 66%, #DA291C 66%); }
-.flag.flag--es { background: linear-gradient(#AA151B 25%, #F1BF00 25% 75%, #AA151B 75%); }
 
 .footer .langdd__btn {
   background: transparent;
