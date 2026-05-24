@@ -1,6 +1,20 @@
 /* global React, ReactDOM, Header, Hero, Problem, Features, HowItWorks, DeepDives, Trust, FAQ, FinalCTA, Footer,
-          TweaksPanel, TweakSection, TweakRadio, TweakSelect, useTweaks */
+          TweaksPanel, TweakSection, TweakRadio, TweakSelect, useTweaks, LangContext */
 const { useState: useStateRoot, useEffect: useEffectRoot } = React;
+
+const LANG_STORAGE_KEY = "triplanio.lang";
+const SUPPORTED_LANGS = ["EN", "RU", "ES"];
+
+function detectInitialLang() {
+  try {
+    const stored = window.localStorage.getItem(LANG_STORAGE_KEY);
+    if (stored && SUPPORTED_LANGS.indexOf(stored) !== -1) return stored;
+  } catch (_) { /* localStorage may be unavailable in some embeds */ }
+  const nav = (navigator.language || "en").slice(0, 2).toLowerCase();
+  if (nav === "ru") return "RU";
+  if (nav === "es") return "ES";
+  return "EN";
+}
 
 /* Defaults are persisted by the host between EDITMODE markers.
    They live in index.html as window.TWEAK_DEFAULTS. */
@@ -63,8 +77,13 @@ function useFontLoader(type) {
 }
 
 function App() {
-  const [lang, setLang] = useStateRoot("EN");
+  const [lang, setLangRaw] = useStateRoot(detectInitialLang);
   const [t, setTweak] = useTweaks(DEFAULTS);
+
+  const setLang = (next) => {
+    setLangRaw(next);
+    try { window.localStorage.setItem(LANG_STORAGE_KEY, next); } catch (_) {}
+  };
 
   /* Push tweaks onto <html> as data-attrs so the stylesheet swaps tokens. */
   useEffectRoot(() => {
@@ -73,11 +92,17 @@ function App() {
     document.documentElement.setAttribute("data-density", t.density);
   }, [t.palette, t.type, t.density]);
 
+  /* Reflect current lang on <html lang="..."> for a11y / SEO. */
+  useEffectRoot(() => {
+    const map = { EN: "en", RU: "ru", ES: "es" };
+    document.documentElement.setAttribute("lang", map[lang] || "en");
+  }, [lang]);
+
   useFontLoader(t.type);
   useScrollReveal();
 
   return (
-    <>
+    <LangContext.Provider value={lang}>
       <Header lang={lang} setLang={setLang} />
       <main>
         <Hero />
@@ -129,7 +154,7 @@ function App() {
           onChange={(v) => setTweak("density", v)}
         />
       </TweaksPanel>
-    </>
+    </LangContext.Provider>
   );
 }
 

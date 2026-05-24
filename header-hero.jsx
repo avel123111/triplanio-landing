@@ -1,4 +1,4 @@
-/* global React, Icon, TriplanioMark */
+/* global React, Icon, TriplanioMark, useT */
 const { useState, useEffect, useRef, useCallback } = React;
 
 /* =========================================================
@@ -6,9 +6,9 @@ const { useState, useEffect, useRef, useCallback } = React;
 ========================================================= */
 const APP_URL = "https://app.triplanio.com";
 const NAV = [
-  { label: "Features", href: "#features" },
-  { label: "How it works", href: "#how" },
-  { label: "FAQ", href: "#faq" },
+  { tkey: "nav.features", href: "#features" },
+  { tkey: "nav.how",      href: "#how" },
+  { tkey: "nav.faq",      href: "#faq" },
 ];
 
 /* =========================================================
@@ -60,6 +60,7 @@ function Flag({ kind, width = 18, height = 12 }) {
 }
 
 function LangDropdown({ value, onChange, direction = "down" }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
   useEffect(() => {
@@ -82,14 +83,14 @@ function LangDropdown({ value, onChange, direction = "down" }) {
         className="langdd__btn"
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label="Language"
+        aria-label={t("lang.label")}
         onClick={() => setOpen((v) => !v)}
       >
         <Flag kind={current.flag} width={18} height={12} />
         <span>{current.code}</span>
         <Icon name="chevron" size={12} className="chev" style={{ transform: "rotate(90deg)" }} />
       </button>
-      <div className="langdd__menu" role="listbox" aria-label="Language">
+      <div className="langdd__menu" role="listbox" aria-label={t("lang.label")}>
         {LANGS.map((l) => (
           <button
             key={l.code}
@@ -110,6 +111,7 @@ function LangDropdown({ value, onChange, direction = "down" }) {
 }
 
 function Header({ lang, setLang }) {
+  const t = useT();
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -136,16 +138,16 @@ function Header({ lang, setLang }) {
 
           <nav className="nav" aria-label="Primary">
             {NAV.map((n) => (
-              <a key={n.href} href={n.href}>{n.label}</a>
+              <a key={n.href} href={n.href}>{t(n.tkey)}</a>
             ))}
           </nav>
 
           <div className="header__right">
             <LangDropdown value={lang} onChange={setLang} />
-            <a className="btn btn--primary" href={APP_URL}>Start Planning</a>
+            <a className="btn btn--primary" href={APP_URL}>{t("header.cta")}</a>
             <button
               className="hamburger"
-              aria-label="Open menu"
+              aria-label={t("lang.label")}
               aria-expanded={drawerOpen}
               onClick={() => setDrawerOpen((v) => !v)}
             >
@@ -159,7 +161,7 @@ function Header({ lang, setLang }) {
         <ul>
           {NAV.map((n) => (
             <li key={n.href}>
-              <a href={n.href} onClick={() => setDrawerOpen(false)}>{n.label}</a>
+              <a href={n.href} onClick={() => setDrawerOpen(false)}>{t(n.tkey)}</a>
             </li>
           ))}
         </ul>
@@ -175,8 +177,9 @@ function Header({ lang, setLang }) {
    Hero — copy + mocked Timeline app frame
 ========================================================= */
 function HeroMockup() {
+  const t = useT();
   return (
-    <div className="app-frame" role="img" aria-label="Triplanio app — Timeline view showing a Lisbon to Porto to Barcelona trip">
+    <div className="app-frame" role="img" aria-label={t("mockup.trip_title")}>
       <div className="app-frame__bar">
         <span className="dot dot--r" />
         <span className="dot dot--y" />
@@ -185,89 +188,89 @@ function HeroMockup() {
       </div>
       <div className="app-frame__body">
         <aside className="app-sidebar" aria-hidden="true">
-          <div className="app-sidebar__group">Trips</div>
+          <div className="app-sidebar__group">{t("mockup.trips")}</div>
           <div className="app-sidebar__item is-active">
             <span className="swatch swatch--lisbon" />
-            Iberia — Summer ’26
+            {t("mockup.trip_title")}
           </div>
           <div className="app-sidebar__item">
             <span className="swatch" style={{ background: "#8693a8" }} />
-            Japan in cherry season
+            {t("mockup.other_trip_1")}
           </div>
           <div className="app-sidebar__item">
             <span className="swatch" style={{ background: "#8693a8" }} />
-            Patagonia trek
+            {t("mockup.other_trip_2")}
           </div>
-          <div className="app-sidebar__group">This trip</div>
+          <div className="app-sidebar__group">{t("mockup.this_trip")}</div>
           <div className="app-sidebar__item">
             <span className="swatch swatch--lisbon" />
-            Lisbon · 4 nights
+            {t("mockup.nights_4")}
           </div>
           <div className="app-sidebar__item">
             <span className="swatch swatch--porto" />
-            Porto · 2 nights
+            {t("mockup.nights_2")}
           </div>
           <div className="app-sidebar__item">
             <span className="swatch swatch--bcn" />
-            Barcelona · 5 nights
+            {t("mockup.nights_5")}
           </div>
         </aside>
 
         <div className="app-main">
           <div className="app-main__head">
             <div>
-              <div className="app-main__title">Iberia — Summer ’26</div>
-              <div className="app-main__subtitle">Jul 12 → Jul 23 · 3 cities · 4 travelers</div>
+              <div className="app-main__title">{t("mockup.trip_title")}</div>
+              <div className="app-main__subtitle">{t("mockup.subtitle")}</div>
             </div>
             <div className="app-tabs" aria-hidden="true">
-              <span className="app-tab is-active">Timeline</span>
-              <span className="app-tab">Calendar</span>
-              <span className="app-tab">Map</span>
+              <span className="app-tab is-active">{t("mockup.tab_timeline")}</span>
+              <span className="app-tab">{t("mockup.tab_calendar")}</span>
+              <span className="app-tab">{t("mockup.tab_map")}</span>
             </div>
           </div>
 
           <div className="tl">
-            <div className="tl__day" data-day="Sat · Jul 12">
+            <div className="tl__day" data-day={t("mockup.day1")}>
               <div className="tl-card">
                 <span className="icon"><Icon name="plane" /></span>
                 <span><strong>LHR → LIS</strong> · British Airways 503</span>
-                <span className="tag">Flight</span>
+                <span className="tag">{t("mockup.tag_flight")}</span>
                 <span className="meta">10:25</span>
               </div>
               <div className="tl-card">
                 <span className="icon"><Icon name="bed" /></span>
-                <span><strong>Memmo Alfama</strong> · check-in</span>
-                <span className="tag tag--green">Hotel</span>
+                <span><strong>Memmo Alfama</strong> · {t("mockup.checkin")}</span>
+                <span className="tag tag--green">{t("mockup.tag_hotel")}</span>
                 <span className="meta">15:00</span>
               </div>
             </div>
 
-            <div className="tl__day tl__day--accent" data-day="Sun · Jul 13">
+            <div className="tl__day tl__day--accent" data-day={t("mockup.day2")}>
               <div className="tl-card">
                 <span className="icon"><Icon name="cam" /></span>
-                <span><strong>Tram 28 ride</strong> · Alfama loop</span>
-                <span className="tag tag--warm">Activity</span>
+                <span><strong>Tram 28</strong> · Alfama loop</span>
+                <span className="tag tag--warm">{t("mockup.tag_activity")}</span>
                 <span className="meta">10:00</span>
               </div>
               <div className="tl-card">
                 <span className="icon"><Icon name="cam" /></span>
                 <span><strong>Pastéis de Belém</strong> · pastry crawl</span>
-                <span className="tag tag--warm">Activity</span>
+                <span className="tag tag--warm">{t("mockup.tag_activity")}</span>
                 <span className="meta">15:30</span>
               </div>
             </div>
 
-            <div className="tl__day tl__day--green" data-day="Wed · Jul 16">
+            <div className="tl__day tl__day--green" data-day={t("mockup.day3")}>
               <div className="tl-card">
                 <span className="icon"><Icon name="train" /></span>
                 <span><strong>Lisbon → Porto</strong> · Alfa Pendular</span>
-                <span className="tag">Transfer</span>
+                <span className="tag">{t("mockup.tag_transfer")}</span>
                 <span className="meta">08:39</span>
               </div>
               <div className="tl-card">
                 <span className="icon"><Icon name="bed" /></span>
-                <span><strong>Torel Avantgarde</strong> · check-in</span>
-                <span className="tag tag--green">Hotel</span>
+                <span><strong>Torel Avantgarde</strong> · {t("mockup.checkin")}</span>
+                <span className="tag tag--green">{t("mockup.tag_hotel")}</span>
                 <span className="meta">14:00</span>
               </div>
             </div>
@@ -279,31 +282,29 @@ function HeroMockup() {
 }
 
 function Hero() {
+  const t = useT();
   return (
     <section className="hero" id="top">
       <div className="container">
         <div className="hero__grid">
           <div className="hero__copy reveal">
             <h1>
-              Your whole trip.
-              <span className="break"><span className="accent">One</span> beautiful plan.</span>
+              {t("hero.h1_a")}
+              <span className="break"><span className="accent">{t("hero.h1_b_accent")}</span> {t("hero.h1_c")}</span>
             </h1>
-            <p className="hero__lede">
-              Build multi-city itineraries, plan together, track budgets in every currency,
-              and let Triplanio handle the boring parts.
-            </p>
+            <p className="hero__lede">{t("hero.lede")}</p>
             <div className="hero__ctas">
               <a className="btn btn--primary btn--lg" href={APP_URL}>
-                Start Planning <Icon name="arrowRight" size={16} className="chev" />
+                {t("hero.cta_primary")} <Icon name="arrowRight" size={16} className="chev" />
               </a>
-              <a className="btn btn--ghost btn--lg" href="#how">See how it works</a>
+              <a className="btn btn--ghost btn--lg" href="#how">{t("hero.cta_secondary")}</a>
             </div>
             <div className="hero__trust">
-              <span>Free to start</span>
+              <span>{t("hero.trust_free")}</span>
               <span className="dot" />
-              <span>No credit card</span>
+              <span>{t("hero.trust_no_card")}</span>
               <span className="dot" />
-              <span>Available in EN · RU · ES</span>
+              <span>{t("hero.trust_languages")}</span>
             </div>
           </div>
 
@@ -312,7 +313,7 @@ function Hero() {
 
             <div className="float float--budget" aria-hidden="true">
               <div style={{ fontSize: 11, color: "var(--muted)", fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase" }}>
-                Trip budget
+                {t("float.trip_budget")}
               </div>
               <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 4 }}>
                 <strong style={{ fontFamily: "var(--font-display)", fontSize: 22, letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums" }}>
@@ -331,8 +332,8 @@ function Hero() {
                   fontSize: 11, fontWeight: 700,
                 }}>AI</span>
                 <div style={{ fontSize: 12.5, lineHeight: 1.3 }}>
-                  <div style={{ fontWeight: 600 }}>Leave at 14:10</div>
-                  <div style={{ color: "var(--muted)", fontSize: 11.5 }}>Train to Porto, 30 min from hotel</div>
+                  <div style={{ fontWeight: 600 }}>{t("float.leave_at_title")}</div>
+                  <div style={{ color: "var(--muted)", fontSize: 11.5 }}>{t("float.leave_at_sub")}</div>
                 </div>
               </div>
             </div>
@@ -340,13 +341,13 @@ function Hero() {
             <div className="float float--pins" aria-hidden="true">
               <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11.5, fontWeight: 600 }}>
                 <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--brand)" }} />
-                Lisbon
+                {t("city.lisbon")}
                 <span style={{ width: 14, height: 1, background: "var(--line)" }} />
                 <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--warm)" }} />
-                Porto
+                {t("city.porto")}
                 <span style={{ width: 14, height: 1, background: "var(--line)" }} />
                 <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--success)" }} />
-                Barcelona
+                {t("city.barcelona")}
               </div>
             </div>
           </div>

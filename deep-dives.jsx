@@ -1,4 +1,4 @@
-/* global React, Icon */
+/* global React, Icon, useT */
 const { useState: useState2 } = React;
 
 /* =========================================================
@@ -7,23 +7,29 @@ const { useState: useState2 } = React;
 
 /* 5a — Three views (Timeline / Calendar / Map) */
 function ThreeViewsVisual() {
+  const t = useT();
   const [view, setView] = useState2("Map");
+  const tabs = [
+    { id: "Timeline", labelKey: "mockup.tab_timeline" },
+    { id: "Calendar", labelKey: "mockup.tab_calendar" },
+    { id: "Map",      labelKey: "mockup.tab_map" },
+  ];
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", borderBottom: "1px solid var(--line-2)" }}>
         <div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 600, letterSpacing: ".05em", textTransform: "uppercase" }}>
-          Iberia ’26
+          {t("mockup.trip_title")}
         </div>
         <div className="app-tabs">
-          {["Timeline", "Calendar", "Map"].map((v) => (
+          {tabs.map((tab) => (
             <button
-              key={v}
+              key={tab.id}
               type="button"
-              className={`app-tab ${view === v ? "is-active" : ""}`}
-              onClick={() => setView(v)}
+              className={`app-tab ${view === tab.id ? "is-active" : ""}`}
+              onClick={() => setView(tab.id)}
               style={{ cursor: "pointer", border: 0 }}
             >
-              {v}
+              {t(tab.labelKey)}
             </button>
           ))}
         </div>
@@ -50,15 +56,15 @@ function ThreeViewsVisual() {
           </svg>
           <div className="pin" style={{ left: "20%", top: "70%" }}>
             <span className="pin__dot" />
-            <span className="pin__lbl">Lisbon</span>
+            <span className="pin__lbl">{t("city.lisbon")}</span>
           </div>
           <div className="pin" style={{ left: "48%", top: "55%" }}>
             <span className="pin__dot" style={{ background: "var(--warm)" }} />
-            <span className="pin__lbl">Porto</span>
+            <span className="pin__lbl">{t("city.porto")}</span>
           </div>
           <div className="pin" style={{ left: "78%", top: "44%" }}>
             <span className="pin__dot" style={{ background: "var(--success)" }} />
-            <span className="pin__lbl">Barcelona</span>
+            <span className="pin__lbl">{t("city.barcelona")}</span>
           </div>
         </div>
       )}
@@ -98,9 +104,9 @@ function ThreeViewsVisual() {
             })}
           </div>
           <div style={{ display: "flex", gap: 14, marginTop: 12, fontSize: 11.5, color: "var(--muted)" }}>
-            <span><i style={{ display: "inline-block", width: 10, height: 10, background: "rgba(33,103,226,.5)", borderRadius: 3, marginRight: 6 }} />Lisbon</span>
-            <span><i style={{ display: "inline-block", width: 10, height: 10, background: "rgba(201,96,58,.5)", borderRadius: 3, marginRight: 6 }} />Porto</span>
-            <span><i style={{ display: "inline-block", width: 10, height: 10, background: "rgba(31,138,91,.5)", borderRadius: 3, marginRight: 6 }} />Barcelona</span>
+            <span><i style={{ display: "inline-block", width: 10, height: 10, background: "rgba(33,103,226,.5)", borderRadius: 3, marginRight: 6 }} />{t("city.lisbon")}</span>
+            <span><i style={{ display: "inline-block", width: 10, height: 10, background: "rgba(201,96,58,.5)", borderRadius: 3, marginRight: 6 }} />{t("city.porto")}</span>
+            <span><i style={{ display: "inline-block", width: 10, height: 10, background: "rgba(31,138,91,.5)", borderRadius: 3, marginRight: 6 }} />{t("city.barcelona")}</span>
           </div>
         </div>
       )}
@@ -109,11 +115,11 @@ function ThreeViewsVisual() {
         <div style={{ padding: 22 }}>
           <div style={{ display: "grid", gap: 8 }}>
             {[
-              { d: "Jul 12", t: "Flight LHR → LIS", tag: "Flight", color: "var(--brand)" },
-              { d: "Jul 13", t: "Tram 28 ride", tag: "Activity", color: "var(--warm)" },
-              { d: "Jul 16", t: "Train Lisbon → Porto", tag: "Transfer", color: "var(--brand)" },
-              { d: "Jul 18", t: "Flight Porto → BCN", tag: "Flight", color: "var(--brand)" },
-              { d: "Jul 21", t: "Sagrada Família entry", tag: "Activity", color: "var(--warm)" },
+              { d: "Jul 12", title: `${t("mockup.tag_flight")} LHR → LIS`,                                          tagKey: "mockup.tag_flight",   color: "var(--brand)" },
+              { d: "Jul 13", title: `Tram 28`,                                                                       tagKey: "mockup.tag_activity", color: "var(--warm)" },
+              { d: "Jul 16", title: `${t("mockup.tag_transfer")} ${t("city.lisbon")} → ${t("city.porto")}`,          tagKey: "mockup.tag_transfer", color: "var(--brand)" },
+              { d: "Jul 18", title: `${t("mockup.tag_flight")} ${t("city.porto")} → BCN`,                            tagKey: "mockup.tag_flight",   color: "var(--brand)" },
+              { d: "Jul 21", title: `Sagrada Família`,                                                               tagKey: "mockup.tag_activity", color: "var(--warm)" },
             ].map((r, i) => (
               <div key={i} style={{
                 display: "grid", gridTemplateColumns: "70px 1fr auto",
@@ -122,8 +128,8 @@ function ThreeViewsVisual() {
                 padding: "10px 12px", fontSize: 13,
               }}>
                 <span style={{ color: "var(--muted)", fontWeight: 600, fontSize: 11.5 }}>{r.d}</span>
-                <span>{r.t}</span>
-                <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 999, background: "rgba(33,103,226,.08)", color: r.color, fontWeight: 600 }}>{r.tag}</span>
+                <span>{r.title}</span>
+                <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 999, background: "rgba(33,103,226,.08)", color: r.color, fontWeight: 600 }}>{t(r.tagKey)}</span>
               </div>
             ))}
           </div>
@@ -135,13 +141,12 @@ function ThreeViewsVisual() {
 
 /* 5b — AI planner chat */
 function PlannerVisual() {
+  const t = useT();
   return (
     <div className="chat" aria-hidden="true">
-      <div className="bubble bubble--user">
-        11 days · 4 people · Iberia · slow pace · ocean swims · no museums.
-      </div>
+      <div className="bubble bubble--user">{t("planner.user_msg")}</div>
       <div className="bubble bubble--ai">
-        Drafting a route from Lisbon north along the coast to Barcelona…
+        {t("planner.ai_msg")}
         <div style={{ marginTop: 6 }}>
           <span className="typing"><span /><span /><span /></span>
         </div>
@@ -151,34 +156,34 @@ function PlannerVisual() {
         <div className="planresult">
           <Icon name="bed" />
           <div>
-            <strong>Lisbon · 4 nights</strong>
-            <div style={{ color: "var(--muted)", fontSize: 11.5 }}>Alfama, ocean light, slow mornings</div>
+            <strong>{t("planner.res_lisbon")}</strong>
+            <div style={{ color: "var(--muted)", fontSize: 11.5 }}>{t("planner.res_lisbon_sub")}</div>
           </div>
-          <span className="badge">Stay</span>
+          <span className="badge">{t("planner.badge_stay")}</span>
         </div>
         <div className="planresult">
           <Icon name="train" />
           <div>
-            <strong>Lisbon → Porto</strong>
-            <div style={{ color: "var(--muted)", fontSize: 11.5 }}>Alfa Pendular · 2h 50m · 08:39</div>
+            <strong>{t("planner.res_train")}</strong>
+            <div style={{ color: "var(--muted)", fontSize: 11.5 }}>{t("planner.res_train_sub")}</div>
           </div>
-          <span className="badge">Transfer</span>
+          <span className="badge">{t("planner.badge_transfer")}</span>
         </div>
         <div className="planresult">
           <Icon name="bed" />
           <div>
-            <strong>Porto · 2 nights</strong>
-            <div style={{ color: "var(--muted)", fontSize: 11.5 }}>Douro views, no museum agenda</div>
+            <strong>{t("planner.res_porto")}</strong>
+            <div style={{ color: "var(--muted)", fontSize: 11.5 }}>{t("planner.res_porto_sub")}</div>
           </div>
-          <span className="badge">Stay</span>
+          <span className="badge">{t("planner.badge_stay")}</span>
         </div>
         <div className="planresult">
           <Icon name="plane" />
           <div>
-            <strong>Porto → Barcelona</strong>
-            <div style={{ color: "var(--muted)", fontSize: 11.5 }}>Vueling 6602 · 2h 20m</div>
+            <strong>{t("planner.res_flight")}</strong>
+            <div style={{ color: "var(--muted)", fontSize: 11.5 }}>{t("planner.res_flight_sub")}</div>
           </div>
-          <span className="badge">Flight</span>
+          <span className="badge">{t("planner.badge_flight")}</span>
         </div>
       </div>
     </div>
@@ -187,6 +192,7 @@ function PlannerVisual() {
 
 /* 5c — Concierge phone */
 function ConciergeVisual() {
+  const t = useT();
   return (
     <div style={{ background: "linear-gradient(180deg, #eef2f9, #f6f8fc)", padding: 24 }}>
       <div className="phone">
@@ -194,27 +200,17 @@ function ConciergeVisual() {
           <span className="av">T</span>
           <div>
             <div className="name">Triplanio</div>
-            <div className="sub">via Telegram · online</div>
+            <div className="sub">{t("phone.via")}</div>
           </div>
           <Icon name="telegram" size={16} stroke="none" fill="#2167e2" style={{ marginLeft: "auto" }} />
         </div>
         <div className="phone__body">
-          <div className="phone__time">Today · 09:14</div>
-          <div className="bubble bubble--ai">
-            Heads up — the train to Porto leaves in 4h 25m. Leave the hotel by 14:10 to be safe.
-          </div>
-          <div className="bubble bubble--user" style={{ alignSelf: "flex-end" }}>
-            What's the platform?
-          </div>
-          <div className="bubble bubble--ai">
-            Sta. Apolónia · Platform 3. Your seats are coach 22, 41A–D.
-          </div>
-          <div className="bubble bubble--user" style={{ alignSelf: "flex-end" }}>
-            Hotel address in Porto?
-          </div>
-          <div className="bubble bubble--ai">
-            Torel Avantgarde — R. da Restauração 336, 4050-501 Porto. Check-in from 14:00.
-          </div>
+          <div className="phone__time">{t("phone.today")}</div>
+          <div className="bubble bubble--ai">{t("phone.b1")}</div>
+          <div className="bubble bubble--user" style={{ alignSelf: "flex-end" }}>{t("phone.u1")}</div>
+          <div className="bubble bubble--ai">{t("phone.b2")}</div>
+          <div className="bubble bubble--user" style={{ alignSelf: "flex-end" }}>{t("phone.u2")}</div>
+          <div className="bubble bubble--ai">{t("phone.b3")}</div>
         </div>
       </div>
     </div>
@@ -223,33 +219,34 @@ function ConciergeVisual() {
 
 /* 5d — Budget chart */
 function BudgetVisual() {
+  const t = useT();
   const rows = [
-    { c: "Hotels",     pct: 42, amt: "€2,025", ccy: "$2,190", color: "#2167e2" },
-    { c: "Flights",    pct: 28, amt: "€1,350", ccy: "$1,460", color: "#5b8fff" },
-    { c: "Transfers",  pct: 9,  amt: "€434",   ccy: "$469",   color: "#9bb6ff" },
-    { c: "Activities", pct: 13, amt: "€627",   ccy: "$678",   color: "#c9603a" },
-    { c: "Food & misc",pct: 8,  amt: "€384",   ccy: "$415",   color: "#1f8a5b" },
+    { k: "mini.hotels",     pct: 42, amt: "€2,025", ccy: "$2,190", color: "#2167e2" },
+    { k: "mini.flights",    pct: 28, amt: "€1,350", ccy: "$1,460", color: "#5b8fff" },
+    { k: "mini.transfers",  pct: 9,  amt: "€434",   ccy: "$469",   color: "#9bb6ff" },
+    { k: "mini.activities", pct: 13, amt: "€627",   ccy: "$678",   color: "#c9603a" },
+    { k: "mini.food_misc",  pct: 8,  amt: "€384",   ccy: "$415",   color: "#1f8a5b" },
   ];
   return (
     <div className="budget">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
         <span style={{ fontSize: 12, color: "var(--muted)", fontWeight: 600, letterSpacing: ".05em", textTransform: "uppercase" }}>
-          Trip total
+          {t("mini.total")}
         </span>
-        <span style={{ fontSize: 11.5, color: "var(--muted)" }}>Home currency · EUR · live FX</span>
+        <span style={{ fontSize: 11.5, color: "var(--muted)" }}>{t("mini.home_ccy")}</span>
       </div>
       <div className="budget__total">
         <span className="big">€4,820</span>
-        <span className="delta">€180 under plan</span>
+        <span className="delta">{t("mini.under_plan")}</span>
       </div>
       <div className="budget__bar">
-        {rows.map((r) => <i key={r.c} style={{ width: `${r.pct}%`, background: r.color }} />)}
+        {rows.map((r) => <i key={r.k} style={{ width: `${r.pct}%`, background: r.color }} />)}
       </div>
       <div className="budget__rows" style={{ marginTop: 8 }}>
         {rows.map((r) => (
-          <div className="budget__row" key={r.c}>
+          <div className="budget__row" key={r.k}>
             <span className="sw" style={{ background: r.color }} />
-            <span>{r.c}</span>
+            <span>{t(r.k)}</span>
             <span className="amt">{r.amt}</span>
             <span className="ccy">{r.ccy}</span>
           </div>
@@ -259,18 +256,19 @@ function BudgetVisual() {
   );
 }
 
-function DeepDive({ reverse, eyebrow, title, body, highlights, children }) {
+function DeepDive({ reverse, eyebrowKey, titleKey, bodyKey, highlightKeys, children }) {
+  const t = useT();
   return (
     <div className={`deep ${reverse ? "deep--reverse" : ""} reveal`}>
       <div className="deep__copy">
-        <span className="tag-eyebrow"><span className="dot" />{eyebrow}</span>
-        <h3>{title}</h3>
-        <p>{body}</p>
+        <span className="tag-eyebrow"><span className="dot" />{t(eyebrowKey)}</span>
+        <h3>{t(titleKey)}</h3>
+        <p>{t(bodyKey)}</p>
         <ul className="deep__highlights">
-          {highlights.map((h) => (
-            <li key={h}>
+          {highlightKeys.map((k) => (
+            <li key={k}>
               <span className="check"><Icon name="check" size={12} strokeWidth={2.4} /></span>
-              <span>{h}</span>
+              <span>{t(k)}</span>
             </li>
           ))}
         </ul>
@@ -281,64 +279,49 @@ function DeepDive({ reverse, eyebrow, title, body, highlights, children }) {
 }
 
 function DeepDives() {
+  const t = useT();
   return (
     <section className="section section--wash">
       <div className="container">
         <div className="section__head section__head--left reveal" style={{ marginBottom: 16 }}>
-          <span className="eyebrow">A closer look</span>
-          <h2 style={{ maxWidth: 18 + "ch" }}>The product, in detail.</h2>
+          <span className="eyebrow">{t("dd.eyebrow")}</span>
+          <h2 style={{ maxWidth: 18 + "ch" }}>{t("dd.h2")}</h2>
         </div>
 
         <DeepDive
-          eyebrow="Timeline · Calendar · Map"
-          title="One trip, three views."
-          body="See your trip the way you think about it. Switch between a chronological timeline, a calendar view that shows free days at a glance, and a map that draws every leg of your route across the world."
-          highlights={[
-            "Click any city to expand its stay",
-            "Drag-and-drop to reorder activities",
-            "Map auto-fits as your trip grows",
-          ]}
+          eyebrowKey="dd.threeviews.eyebrow"
+          titleKey="dd.threeviews.title"
+          bodyKey="dd.threeviews.body"
+          highlightKeys={["dd.threeviews.h1", "dd.threeviews.h2", "dd.threeviews.h3"]}
         >
           <ThreeViewsVisual />
         </DeepDive>
 
         <DeepDive
           reverse
-          eyebrow="AI trip planner"
-          title="An AI that actually plans the trip."
-          body="Tell Triplanio where you want to go, how long you have and what you love doing. It returns a draft itinerary — cities, transfers, suggested stays, must-see spots — in seconds. Tweak anything, keep what works."
-          highlights={[
-            "Multi-city routes",
-            "Realistic pacing",
-            "Editable like any handmade plan",
-          ]}
+          eyebrowKey="dd.planner.eyebrow"
+          titleKey="dd.planner.title"
+          bodyKey="dd.planner.body"
+          highlightKeys={["dd.planner.h1", "dd.planner.h2", "dd.planner.h3"]}
         >
           <PlannerVisual />
         </DeepDive>
 
         <DeepDive
-          eyebrow="Telegram & WhatsApp"
-          title="A travel concierge in your pocket."
-          body="Connect your trip to Telegram or WhatsApp and get smart, timezone-aware nudges — when to leave for the airport, when free-cancellation expires, what's next on the day's plan. Ask the AI assistant anything about your trip and get a clear answer in chat."
-          highlights={[
-            "Smart timezone-aware reminders",
-            "“What's my hotel address?” answered instantly",
-            "Mute per trip",
-          ]}
+          eyebrowKey="dd.concierge.eyebrow"
+          titleKey="dd.concierge.title"
+          bodyKey="dd.concierge.body"
+          highlightKeys={["dd.concierge.h1", "dd.concierge.h2", "dd.concierge.h3"]}
         >
           <ConciergeVisual />
         </DeepDive>
 
         <DeepDive
           reverse
-          eyebrow="Smart budget"
-          title="Real budgets, in any currency."
-          body="Triplanio auto-pulls every hotel, transfer and activity price into a single budget — in your home currency — using live exchange rates. Add custom categories, override rates for cash purchases, and see exactly where the money goes."
-          highlights={[
-            "Auto-aggregated from bookings",
-            "Live FX or manual rates",
-            "Custom categories",
-          ]}
+          eyebrowKey="dd.budget.eyebrow"
+          titleKey="dd.budget.title"
+          bodyKey="dd.budget.body"
+          highlightKeys={["dd.budget.h1", "dd.budget.h2", "dd.budget.h3"]}
         >
           <BudgetVisual />
         </DeepDive>
